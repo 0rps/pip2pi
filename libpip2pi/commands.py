@@ -24,8 +24,10 @@ try:
 except ImportError:
     pip_main = None
 
+
 class PipError(Exception):
     pass
+
 
 def warn_wheel():
     print(
@@ -47,8 +49,10 @@ def warn_wheel():
             "    pip install -U setuptools"
         )
 
+
 def dedent(text):
     return textwrap.dedent(text.lstrip("\n")).rstrip()
+
 
 def maintain_cwd(f):
     @functools.wraps(f)
@@ -69,10 +73,12 @@ class InvalidFilePackageName(ValueError):
         msg += ")"
         super(InvalidFilePackageName, self).__init__(msg)
 
+
 def egg_to_package(file):
     warnings.warn("egg_to_package is deprecated; use file_to_package.",
                   stacklevel=1)
     return file_to_package(file)
+
 
 def file_to_package(file, basedir=None):
     """ Returns the package name for a given file, or raises an
@@ -130,15 +136,18 @@ def file_to_package(file, basedir=None):
 
     return (to_safe_name(split[0]), to_safe_rest(split[1]))
 
+
 def try_int(x):
     try:
         return int(x)
     except ValueError:
         return x
 
+
 def pip_get_version():
     pip_dist = pkg_resources.get_distribution("pip")
     return tuple(try_int(x) for x in pip_dist.version.split("."))
+
 
 def pip_run_command(pip_args):
     if pip_main is None:
@@ -281,13 +290,16 @@ def dir2pi(argv=sys.argv, use_symlink=None):
         parser.exit()
     return _dir2pi(option, argv)
 
+
 def normalize_pep503(pkg_name):
     # As per https://www.python.org/dev/peps/pep-0503/#normalized-names
     return re.sub(r"[-_.]+", "-", pkg_name).lower()
 
+
 def normalize_pip67(pkg_name):
     # Normalize for pip 6 and 7
     return re.sub(r"([-.])+", r"\1", pkg_name.replace("_", "-")).lower()
+
 
 def try_symlink(option, source, target):
     try:
@@ -367,11 +379,13 @@ def _dir2pi(option, argv):
 
     return 0
 
+
 def globall(globs):
     result = []
     for g in globs:
         result.extend(glob.glob(g))
     return result
+
 
 @maintain_cwd
 def pip2tgz(argv=sys.argv):
@@ -458,7 +472,6 @@ def handle_new_wheels(outdir, new_wheels):
     """)) %(pip_version, )
 
     print("!" * 80)
-    print
 
     for new_pkg in new_wheels:
         pkg_file_basedir = os.path.abspath(os.path.dirname(new_pkg))
@@ -469,7 +482,9 @@ def handle_new_wheels(outdir, new_wheels):
             pkg_name,
         ])
 
+
 WINDOWS_PATH_RE = re.compile(r"^[A-Za-z]:\\")
+
 
 def is_remote_target(target):
     return ":" in target and not WINDOWS_PATH_RE.match(target)
@@ -549,3 +564,7 @@ def pip2pi(argv=sys.argv):
             working_dir + "/", target + "/",
         ])
     return 0
+
+
+if __name__ == '__main__':
+    pip2pi(['pip2py', './', 'tornado==5.0.2'])
